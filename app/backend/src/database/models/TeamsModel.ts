@@ -26,7 +26,9 @@ Team.init({
   },
 }, {
   sequelize: db,
-  modelName: 'teams',
+  modelName: 'Team',
   timestamps: false,
   underscored: true,
 });
+
+export { Team };
