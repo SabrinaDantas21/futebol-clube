@@ -17,6 +17,7 @@ export default {
       },
     });
 
+    // Inserindo dados iniciais
     await queryInterface.bulkInsert('teams', [
       { id: 1, team_name: 'Avaí/Kindermann' },
       { id: 2, team_name: 'Bahia' },
