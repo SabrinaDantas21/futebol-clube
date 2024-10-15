@@ -15,13 +15,13 @@ class TokenValidator {
   public validateToken(req: AuthenticatedRequest, res: Response, next:
   NextFunction): Response | void {
     const { authorization } = req.headers;
-
     if (!authorization) {
       return res.status(401).json({ message: 'Token not found' });
     }
 
     try {
       const token = authorization.split(' ')[1];
+
       const user = this.jwtUtils.validateToken(token);
 
       if (!user) {
@@ -36,4 +36,4 @@ class TokenValidator {
   }
 }
 
-export default new TokenValidator();
+export default TokenValidator;
