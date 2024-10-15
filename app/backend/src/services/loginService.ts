@@ -11,6 +11,11 @@ export default class LoginService {
       return { status: 400, message: 'All fields must be filled' };
     }
 
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email) || password.length < 6) {
+      return { status: 401, message: 'Invalid email or password' };
+    }
+
     const user = await this.model.findOne({ where: { email }, raw: true });
     if (!user || !compareSync(password, user.password)) {
       return { status: 401, message: 'Invalid email or password' };

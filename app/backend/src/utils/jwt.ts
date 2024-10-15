@@ -19,7 +19,7 @@ export default class JwtUtils {
     return token;
   }
 
-  validateTokem(token: string): Payload {
+  validateToken(token: string): Payload {
     const payload = jwt.verify(token, this.secret) as Payload;
     return payload;
   }
