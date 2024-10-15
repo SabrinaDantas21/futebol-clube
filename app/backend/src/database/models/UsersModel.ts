@@ -26,7 +26,6 @@ User.init(
     username: {
       type: DataTypes.STRING,
       allowNull: false,
-      unique: true,
     },
     email: {
       type: DataTypes.STRING,
@@ -44,8 +43,8 @@ User.init(
   },
   {
     sequelize: db,
-    modelName: 'User',
-    timestamps: true,
+    modelName: 'user',
+    timestamps: false,
   },
 );
 
