@@ -6,3 +6,5 @@ export default interface Matches {
   awayTeamGoals: number,
   inProgress: boolean,
 }
+
+export type IMatches = Matches[];
