@@ -12,9 +12,10 @@ const { expect } = chai;
 
 describe('POST /login', () => {
   let findOneStub: sinon.SinonStub;
+  let hashedPassword: string;
 
   beforeEach(() => {
-    const hashedPassword = bcrypt.hashSync('valid_password', 10);
+    hashedPassword = bcrypt.hashSync('valid_password', 10);
 
     findOneStub = sinon.stub(User, 'findOne').resolves(User.build({
       id: 1,
@@ -102,4 +103,33 @@ describe('POST /login', () => {
     expect(response.status).to.equal(400);
     expect(response.body).to.deep.equal({ message: 'All fields must be filled' });
   });
+
+  it('deve retornar 400 quando o email não for fornecido', async () => {
+    const response = await chai.request(app)
+      .post('/login')
+      .send({ password: 'valid_password' });
+
+    expect(response.status).to.equal(400);
+    expect(response.body).to.deep.equal({ message: 'All fields must be filled' });
+  });
+
+  it('deve retornar 400 quando a senha não for fornecida', async () => {
+    const response = await chai.request(app)
+      .post('/login')
+      .send({ email: 'test@example.com' });
+
+    expect(response.status).to.equal(400);
+    expect(response.body).to.deep.equal({ message: 'All fields must be filled' });
+  });
+
+  it('deve retornar 401 quando o email não seguir o padrão', async () => {
+    findOneStub.resolves(null);
+    const response = await chai.request(app)
+      .post('/login')
+      .send({ email: 'wrong_format_email', password: 'valid_password' });
+
+    expect(response.status).to.equal(401);
+    expect(response.body).to.deep.equal({ message: 'Invalid email or password' });
+  });
+
 });
