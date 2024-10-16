@@ -11,7 +11,17 @@ class MatchesService {
         { model: Teams, as: 'awayTeam', attributes: ['teamName'] },
       ],
     });
-    console.log(matches, 'log do service martches');
+    return matches;
+  }
+
+  public async getByProgress(inProgress: boolean) {
+    const matches = await this.matchesModel.findAll({
+      where: { inProgress },
+      include: [
+        { model: Teams, as: 'homeTeam', attributes: ['teamName'] },
+        { model: Teams, as: 'awayTeam', attributes: ['teamName'] },
+      ],
+    });
     return matches;
   }
 }
