@@ -56,23 +56,26 @@ class MatchesController {
   }
 
   public async createMatch(req: Request, res: Response): Promise<Response> {
-    return this.handleRequest(req, res, async (request) => {
-      const { homeTeamId, awayTeamId, homeTeamGoals, awayTeamGoals } = request.body;
+    const { homeTeamId, awayTeamId, homeTeamGoals, awayTeamGoals } = req.body;
 
-      if (!homeTeamId || !awayTeamId || homeTeamGoals
-        === undefined || awayTeamGoals === undefined) {
-        return res.status(400).json({ message: 'All fields are required' });
-      }
+    if (!homeTeamId || !awayTeamId || homeTeamGoals === undefined || awayTeamGoals === undefined) {
+      return res.status(400).json({ message: 'All fields are required' });
+    }
 
-      const newMatch = await this.matchesService.createMatch({
-        homeTeamId,
-        awayTeamId,
-        homeTeamGoals,
-        awayTeamGoals,
-      });
+    if (homeTeamId === awayTeamId) {
+      return res.status(422)
+        .json({ message: 'It is not possible to create a match with two equal teams' });
+    }
 
-      return res.status(201).json(newMatch);
-    });
+    const homeTeamExists = await this.matchesService.checkTeamExists(homeTeamId);
+    const awayTeamExists = await this.matchesService.checkTeamExists(awayTeamId);
+
+    if (!homeTeamExists || !awayTeamExists) {
+      return res.status(404).json({ message: 'There is no team with such id!' });
+    }
+
+    const newMatch = await this.matchesService.createMatch(req.body);
+    return res.status(201).json(newMatch);
   }
 }
 

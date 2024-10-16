@@ -3,6 +3,7 @@ import Teams from '../database/models/TeamsModel';
 
 class MatchesService {
   private matchesModel = Matches;
+  private teamsModel = Teams;
 
   public async getAllMatches() {
     const matches = await this.matchesModel.findAll({
@@ -44,6 +45,11 @@ class MatchesService {
     await match.save();
 
     return match;
+  }
+
+  public async checkTeamExists(teamId: number): Promise<boolean> {
+    const team = await this.teamsModel.findByPk(teamId);
+    return team !== null;
   }
 
   public async createMatch(matchData: {
