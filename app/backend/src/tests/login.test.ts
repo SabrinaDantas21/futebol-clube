@@ -75,4 +75,31 @@ describe('POST /login', () => {
     expect(response.status).to.equal(401);
     expect(response.body).to.deep.equal({ message: 'Invalid email or password' });
   });
+
+  it('deve retornar 400 quando o email estiver vazio', async () => {
+    const response = await chai.request(app)
+      .post('/login')
+      .send({ email: '', password: 'valid_password' });
+
+    expect(response.status).to.equal(400);
+    expect(response.body).to.deep.equal({ message: 'All fields must be filled' });
+  });
+
+  it('deve retornar 400 quando a senha estiver vazia', async () => {
+    const response = await chai.request(app)
+      .post('/login')
+      .send({ email: 'test@example.com', password: '' });
+
+    expect(response.status).to.equal(400);
+    expect(response.body).to.deep.equal({ message: 'All fields must be filled' });
+  });
+
+  it('deve retornar 400 quando o corpo da requisição estiver vazio', async () => {
+    const response = await chai.request(app)
+      .post('/login')
+      .send({});
+
+    expect(response.status).to.equal(400);
+    expect(response.body).to.deep.equal({ message: 'All fields must be filled' });
+  });
 });
