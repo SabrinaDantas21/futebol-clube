@@ -15,6 +15,20 @@ class LeaderboardController {
       }
     }
   }
+
+  public static async getAwayLeaderboard(req: Request, res: Response): Promise<void> {
+    try {
+      const leaderboard = await LeaderboardService.calculateAwayLeaderboard();
+      res.status(200).json(leaderboard.data);
+    } catch (error: unknown) {
+      console.error('Error fetching away leaderboard:', error);
+      if (error instanceof Error) {
+        res.status(500).json({ status: 'error', message: error.message });
+      } else {
+        res.status(500).json({ status: 'error', message: 'An unexpected error occurred' });
+      }
+    }
+  }
 }
 
 export default LeaderboardController;
