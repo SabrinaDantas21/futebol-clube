@@ -31,6 +31,20 @@ class MatchesService {
       { where: { id } },
     );
   }
+
+  public async updateMatch(id: number, homeTeamGoals: number, awayTeamGoals: number) {
+    const match = await this.matchesModel.findByPk(id);
+
+    if (!match) {
+      throw new Error('Match not found');
+    }
+
+    match.homeTeamGoals = homeTeamGoals;
+    match.awayTeamGoals = awayTeamGoals;
+    await match.save();
+
+    return match;
+  }
 }
 
 export default MatchesService;

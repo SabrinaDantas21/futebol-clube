@@ -4,9 +4,22 @@ import MatchesService from '../services/matchesService';
 class MatchesController {
   private matchesService = new MatchesService();
 
-  public async getAll(req: Request, res: Response): Promise<Response> {
+  private async handleRequest(
+    req: Request,
+    res: Response,
+    action: (req: Request) => Promise<Response>,
+  ): Promise<Response> {
     try {
-      const { inProgress } = req.query;
+      return await action.call(this, req);
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ message: 'Internal server error' });
+    }
+  }
+
+  public async getAll(req: Request, res: Response): Promise<Response> {
+    return this.handleRequest(req, res, async (request) => {
+      const { inProgress } = request.query;
 
       if (inProgress !== undefined) {
         const isProgress = inProgress === 'true';
@@ -16,23 +29,30 @@ class MatchesController {
 
       const matches = await this.matchesService.getAllMatches();
       return res.status(200).json(matches);
-    } catch (error) {
-      console.error(error);
-      return res.status(500).json({ message: 'Internal server error' });
-    }
+    });
   }
 
   public async finishMatch(req: Request, res: Response): Promise<Response> {
-    try {
-      const { id } = req.params;
-
+    return this.handleRequest(req, res, async (request) => {
+      const { id } = request.params;
       await this.matchesService.finishMatch(Number(id));
-
       return res.status(200).json({ message: 'Finished' });
-    } catch (error) {
-      console.error(error);
-      return res.status(500).json({ message: 'Internal server error' });
-    }
+    });
+  }
+
+  public async updateMatch(req: Request, res: Response): Promise<Response> {
+    return this.handleRequest(req, res, async (request) => {
+      const { id } = request.params;
+      const { homeTeamGoals, awayTeamGoals } = request.body;
+
+      if (homeTeamGoals === undefined || awayTeamGoals === undefined) {
+        return res.status(400)
+          .json({ message: 'Both homeTeamGoals and awayTeamGoals are required' });
+      }
+
+      await this.matchesService.updateMatch(Number(id), homeTeamGoals, awayTeamGoals);
+      return res.status(200).json({});
+    });
   }
 }
 
