@@ -54,6 +54,26 @@ class MatchesController {
       return res.status(200).json({});
     });
   }
+
+  public async createMatch(req: Request, res: Response): Promise<Response> {
+    return this.handleRequest(req, res, async (request) => {
+      const { homeTeamId, awayTeamId, homeTeamGoals, awayTeamGoals } = request.body;
+
+      if (!homeTeamId || !awayTeamId || homeTeamGoals
+        === undefined || awayTeamGoals === undefined) {
+        return res.status(400).json({ message: 'All fields are required' });
+      }
+
+      const newMatch = await this.matchesService.createMatch({
+        homeTeamId,
+        awayTeamId,
+        homeTeamGoals,
+        awayTeamGoals,
+      });
+
+      return res.status(201).json(newMatch);
+    });
+  }
 }
 
 export default MatchesController;

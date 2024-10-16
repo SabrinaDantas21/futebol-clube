@@ -45,6 +45,20 @@ class MatchesService {
 
     return match;
   }
+
+  public async createMatch(matchData: {
+    homeTeamId: number;
+    awayTeamId: number;
+    homeTeamGoals: number;
+    awayTeamGoals: number;
+  }) {
+    const newMatch = await this.matchesModel.create({
+      ...matchData,
+      inProgress: true,
+    });
+
+    return newMatch;
+  }
 }
 
 export default MatchesService;
